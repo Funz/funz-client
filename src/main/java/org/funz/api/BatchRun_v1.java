@@ -1403,12 +1403,7 @@ public abstract class BatchRun_v1 implements CaseRunner {
                 //LogUtils.toc("beforeRunCases");
 
                 setState(BATCH_RUNNING);
-                // let's start only some cases (to limit concurrent RunCase threads)
-                /*for (int i = 0; i < prj.getMaxCalcs(); i++) {
-                    if (i < runCases.size()) {
-                        startCases(runCases);
-                    }
-                }*/
+
                 startCases(runCases);
 
                 int f = 0;
