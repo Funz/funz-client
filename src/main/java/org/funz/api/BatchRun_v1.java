@@ -1,27 +1,13 @@
 package org.funz.api;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import static java.lang.Thread.sleep;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.funz.Constants;
 import org.funz.Project;
 import org.funz.ProjectController;
 import org.funz.Protocol;
-import static org.funz.Protocol.ARCHIVE_FILTER;
 import org.funz.log.Alert;
 import org.funz.log.Log;
-import org.funz.log.LogTicToc;
 import org.funz.parameter.Cache;
 import org.funz.parameter.Case;
 import org.funz.parameter.Case.CaseRunner;
@@ -30,14 +16,21 @@ import org.funz.parameter.CaseList;
 import org.funz.parameter.OutputFunctionExpression;
 import org.funz.run.Client;
 import org.funz.run.Computer;
-import static org.funz.util.Data.*;
 import org.funz.util.Disk;
 import org.funz.util.Format;
-
-import static org.funz.util.Format.repeat;
 import org.funz.util.ZipTool;
 import org.math.array.IntegerArray;
-import org.funz.log.LogTicToc;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.lang.Thread.sleep;
+import static org.funz.Protocol.ARCHIVE_FILTER;
+import static org.funz.util.Data.*;
+import static org.funz.util.Format.repeat;
 
 /**
  * @author richet
@@ -1551,7 +1544,7 @@ public abstract class BatchRun_v1 implements CaseRunner {
                 while(i<runCases.size() && !askToStop) {
                     RunCase currentRunCase = runCases.get(i);
                     // If the last cases has been started or is finished
-                    if(lastStartedCases==null || lastStartedCases.c.hasRun() || lastStartedCases.c.isReserved()) {
+                    if(lastStartedCases==null || lastStartedCases.c==null ||lastStartedCases.c.hasRun() || lastStartedCases.c.isReserved()) {
                         try{
                             currentRunCase.start();
                             lastStartedCases = currentRunCase;
