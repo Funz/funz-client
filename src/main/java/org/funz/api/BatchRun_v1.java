@@ -1555,14 +1555,14 @@ public abstract class BatchRun_v1 implements CaseRunner {
                         try{
                             currentRunCase.start();
                             lastStartedCases = currentRunCase;
-                            System.out.println("*********Start case: " + i);
+                            out("Will start case " + currentRunCase.c.getName(), 3);
                             i++;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
                         try {
-                            sleep(1000);
+                            sleep(SLEEP_PERIOD);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
