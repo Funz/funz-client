@@ -1411,14 +1411,12 @@ public abstract class BatchRun_v1 implements CaseRunner {
 
                 setState(BATCH_RUNNING);
                 // let's start only some cases (to limit concurrent RunCase threads)
-                for (int i = 0; i < prj.getMaxCalcs(); i++) {
+                /*for (int i = 0; i < prj.getMaxCalcs(); i++) {
                     if (i < runCases.size()) {
-                        out("Will start case " + runCases.get(i).c.getName(), 3);
-                        //LogUtils.tic("runCases.get(i).start()");
-                        runCases.get(i).start();
-                        //LogUtils.toc("runCases.get(i).start()");
+                        startCases(runCases);
                     }
-                }
+                }*/
+                startCases(runCases);
 
                 int f = 0;
                 String state_value = "";
@@ -1439,7 +1437,7 @@ public abstract class BatchRun_v1 implements CaseRunner {
                     f = filled(torun);
                     //LogTicToc.toc("filled");
                     // let's start only some cases (to limit concurrent RunCase threads)
-                    for (int i = 0; i < /*f - f_old*/ Math.min(prj.getMaxCalcs(), numToRun - f); i++) {
+                    /*for (int i = 0; i < Math.min(prj.getMaxCalcs(), numToRun - f); i++) {
                         for (int j = 0; j < runCases.size(); j++) {
                             //LogTicToc.tic("runCases.get(j)");
                             RunCase rc = runCases.get(j);
@@ -1455,7 +1453,7 @@ public abstract class BatchRun_v1 implements CaseRunner {
                                 }//else System.err.println(rc.c.getStatusInformation());
                             }
                         }
-                    }
+                    }*/
 
                     //out("Finished " + f + "/" + getCases().size() + " cases.", 2);
                     if (Funz.getVerbosity() > 3) {
@@ -1541,6 +1539,38 @@ public abstract class BatchRun_v1 implements CaseRunner {
         setState(BATCH_OVER);
         //LogUtils.toc("runBatch");
         return true;
+    }
+
+    public void startCases(List<RunCase> runCases) {
+        //List<RunCase> startedCases = new ArrayList<>();
+
+        Thread thread = new Thread("Scheduler") {
+            public void run(){
+                RunCase lastStartedCases = null;
+                int i=0;
+                while(i<runCases.size() && !askToStop) {
+                    RunCase currentRunCase = runCases.get(i);
+                    // If the last cases has been started or is finished
+                    if(lastStartedCases==null || lastStartedCases.c.hasRun() || lastStartedCases.c.isReserved()) {
+                        try{
+                            currentRunCase.start();
+                            lastStartedCases = currentRunCase;
+                            System.out.println("*********Start case: " + i);
+                            i++;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+        thread.start();
     }
 
     public void setArchiveDirectory(File ad) throws IOException {
