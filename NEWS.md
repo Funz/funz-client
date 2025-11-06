@@ -1,3 +1,19 @@
+# v1.17 - 06/11/2025
+
+Almost all work done by Nicolas Chabalier (Artenum)
+
+## Improvements
+* Add new IOparser methods and test associated.
+* Clean and refactor ParseExpression.
+* Add '>' and '<' operations in the IO plugin parser.
+* Update to Rsession 3.1.9
+* Set min Java version to 17.
+
+## Fixes
+* Fix UDP multicast socket after a connection timeout.
+* Fix code for java 8 compiler.
+* Fix IO parse expression with method containing '_' like 'grep_basic()'
+
 # v1.16 - 28/12/2023
 
 ## Improvements
