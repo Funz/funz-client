@@ -33,7 +33,7 @@ jobs:
         echo "R_SERVER=R://localhost" >> $GITHUB_ENV
       shell: bash
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
         java-package: jdk

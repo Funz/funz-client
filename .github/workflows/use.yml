@@ -148,7 +148,7 @@ jobs:
       shell: bash
       if: matrix.CLI == 'Cmd'            
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
         java-package: jdk
