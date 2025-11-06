@@ -13,7 +13,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-latest , windows-latest, macos-latest ]
-        java: [ 21 ]
+        java: [ 11 ]
         Rserver: [ Renjin ]
     env:
       NO_TEST_JAVA: 1
@@ -32,7 +32,6 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         java-package: jdk
-        distribution: graalvm
     - uses: r-lib/actions/setup-r@v2
       with:
         r-version: 'release'
@@ -91,7 +90,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest , windows-latest, macos-latest ]
-        java: [ 21 ]
+        java: [ 11 ]
         Rserver: [ R2js ]
         CLI: [ R, Python, Bash, Cmd ]
         exclude: 
@@ -147,7 +146,6 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         java-package: jdk
-        distribution: graalvm
     - uses: r-lib/actions/setup-r@v2
       with:
         r-version: release
