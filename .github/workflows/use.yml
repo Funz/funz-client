@@ -79,12 +79,6 @@ jobs:
           *.log
           *.out
           *.Rout
-    - if: matrix.os == 'ubuntu-latest' && steps.anttest.outcome != 'success'
-      run: sudo apt-get -y install imagemagick
-    - if: steps.anttest.outcome != 'success'
-      uses: OrbitalOwen/desktop-screenshot-action@0.1
-      with:
-        file-name: 'test-${{ matrix.os }}-${{ matrix.java }}-${{ matrix.Rserver }}-Main.jpg'
     - if: steps.anttest.outcome != 'success' && matrix.os != 'windows-latest'
       run: ps aux
     - if: steps.anttest.outcome != 'success' && matrix.os == 'windows-latest'
