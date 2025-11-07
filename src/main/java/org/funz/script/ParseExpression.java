@@ -17,6 +17,10 @@ public class ParseExpression {
     private final static String PIPE = ">>";
     public final static String FILES = "files";
 
+    static {
+        initEngine();
+    }
+
     /**
      * Initializes the engine by populating the list of static methods from the org.funz.util.Parser class. (see funz-core)
      */
@@ -484,9 +488,9 @@ public class ParseExpression {
 
             if (files != null) {
                 for (File file : files) {
-                    if (file.isFile()) {
+                    if (file != null && file.isFile()) {
                         rFiles.add(file);
-                    } else {
+                    } else if (file != null) {
                         try {
                             Disk.listRecursiveFiles(file, rFiles);
                         } catch (Exception e) {
@@ -504,7 +508,7 @@ public class ParseExpression {
             out = exportObject(CallAlgebra(o, ie));
             Log.logMessage("ParseExpression", SeverityLevel.INFO, false, "  >> " + out);
         } catch (Exception e) {
-            Log.logException(false, new Exception(e.getClass()+": Failed to evaluate expression " + expression + " on files " + rFiles + "\n" + e.getMessage()));
+            Log.logException(false, new Exception(e.getClass()+": Failed to evaluate expression " + expression + " on files " + rFiles + "\n" + e.getMessage(), e));
         }
         return out;
     }

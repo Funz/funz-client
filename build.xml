@@ -187,6 +187,9 @@
             <classpath path="${build.dir}" />
             <classpath path="${unit.test.jar}" />
         </javac>
+        <copy todir="${build.dir}">
+            <fileset dir="${test.resources.dir}"/>
+        </copy>
     </target>
 
     <target name="dist-test" depends="dist" description="compile the tests ">
