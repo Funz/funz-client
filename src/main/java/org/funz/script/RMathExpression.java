@@ -200,18 +200,16 @@ public class RMathExpression extends MathExpression {
 
         if (R.isLocal()) // otherwise will force to use local username HOME, which may be not available on remote Rserve (if used)
             try { // Fix for windows when /cygdrive/c/.. remains in HOME
-                R.log("Force user homedir: "+new File(System.getProperty("user.home")).getAbsolutePath().
-                                replace('\\', '/'));
+                R.log("Force user homedir: "+new File(System.getProperty("user.home")).getAbsolutePath().replace('\\', '/'));
                 R.voidEval("Sys.setenv(HOME='"
-                        + new File(System.getProperty("user.home")).getAbsolutePath().
-                                replace('\\', '/') // Fix path sep
+                        + new File(System.getProperty("user.home")).getAbsolutePath().replace('\\', '/') // Fix path sep
                         + "')");
             } catch (Rsession.RException ex) {
                 Log.err("Failed to setup user homedir: " + ex.getMessage(), 3);
             }
         else
             R.log("Let default remote homedir: "+R.voidEval("Sys.getenv('HOME')"));
-            
+
         printInformation(R);
         initLibPath(R);
         R.log("#################################################################", Level.WARNING);
