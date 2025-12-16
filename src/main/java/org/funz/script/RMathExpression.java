@@ -30,6 +30,7 @@ import org.math.R.RserveDaemon;
 import org.math.R.RserveSession;
 import org.math.R.RserverConf;
 import org.math.R.Rsession;
+import org.math.R.Rsession.RException;
 
 /**
  *
@@ -198,9 +199,10 @@ public class RMathExpression extends MathExpression {
     void initR() {
         R.log("######################### INFORMATION ###########################", Level.WARNING);
 
-        if (R.isLocal()) // otherwise will force to use local username HOME, which may be not available on remote Rserve (if used)
+        boolean RisLocal = (R instanceof R2jsSession) ||(R instanceof RenjinSession) || (R instanceof RserveSession && ((RserveSession) R).RserveConf.isLocal());
+        if (RisLocal) // otherwise will force to use local username HOME, which may be not available on remote Rserve (if used)
             try { // Fix for windows when /cygdrive/c/.. remains in HOME
-                R.log("Force user homedir: "+new File(System.getProperty("user.home")).getAbsolutePath().replace('\\', '/'));
+                R.log("Force user homedir: "+new File(System.getProperty("user.home")).getAbsolutePath().replace('\\', '/'), Level.WARNING);
                 R.voidEval("Sys.setenv(HOME='"
                         + new File(System.getProperty("user.home")).getAbsolutePath().replace('\\', '/') // Fix path sep
                         + "')");
@@ -208,7 +210,11 @@ public class RMathExpression extends MathExpression {
                 Log.err("Failed to setup user homedir: " + ex.getMessage(), 3);
             }
         else
-            R.log("Let default remote homedir: "+R.voidEval("Sys.getenv('HOME')"));
+            try {
+                R.log("Let default remote homedir: "+R.eval("Sys.getenv('HOME')"), Level.WARNING);
+            } catch (RException e) {
+                Log.err("Failed to get remote homedir: " + e.getMessage(), 3);
+            }
 
         printInformation(R);
         initLibPath(R);
@@ -346,8 +352,7 @@ public class RMathExpression extends MathExpression {
 
     public static void printInformation(Rsession R) {
         try {
-            if (R instanceof RserveSession)
-                R.log(R.RserverConf, Level.WARNING);
+            R.log(R.toString(), Level.WARNING);
             String nodename = (String) R.eval("Sys.info()[['nodename']]");
             String rhome = (String) R.eval("Sys.getenv('R_HOME')");
             String home = (String) R.eval("Sys.getenv('HOME')");
