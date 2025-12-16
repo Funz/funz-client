@@ -196,15 +196,21 @@ public class RMathExpression extends MathExpression {
     }
 
     void initR() {
-        try { // Fix for windows when /cygdrive/c/.. remains in HOME
-            R.voidEval("Sys.setenv(HOME='"
-                    + new File(System.getProperty("user.home")).getAbsolutePath().
-                            replace('\\', '/') // Fix path sep
-                    + "')");
-        } catch (Rsession.RException ex) {
-            Log.err("Failed to setup user homedir: " + ex.getMessage(), 3);
-        }
         R.log("######################### INFORMATION ###########################", Level.WARNING);
+
+        if (R.isLocal()) // otherwise will force to use local username HOME, which may be not available on remote Rserve (if used)
+            try { // Fix for windows when /cygdrive/c/.. remains in HOME
+                R.log("Force user homedir: "+new File(System.getProperty("user.home")).getAbsolutePath().
+                                replace('\\', '/'))
+                R.voidEval("Sys.setenv(HOME='"
+                        + new File(System.getProperty("user.home")).getAbsolutePath().
+                                replace('\\', '/') // Fix path sep
+                        + "')");
+            } catch (Rsession.RException ex) {
+                Log.err("Failed to setup user homedir: " + ex.getMessage(), 3);
+            }
+        else
+            R.log("Let default remote homedir: "+R.voidEval("Sys.getenv('HOME')")).
         printInformation(R);
         initLibPath(R);
         R.log("#################################################################", Level.WARNING);
@@ -341,8 +347,11 @@ public class RMathExpression extends MathExpression {
 
     public static void printInformation(Rsession R) {
         try {
+            if (R instanceof RserveSession)
+                R.log(R.RserverConf, Level.WARNING);
             String nodename = (String) R.eval("Sys.info()[['nodename']]");
             String rhome = (String) R.eval("Sys.getenv('R_HOME')");
+            String home = (String) R.eval("Sys.getenv('HOME')");
             String host = (nodename == null ? "?" : nodename) + ":" + (rhome == null ? "?" : rhome);
             R.log("Host " + host, Level.WARNING);
             String dir = R.eval("getwd()").toString();
@@ -402,7 +411,7 @@ public class RMathExpression extends MathExpression {
         }
         try {
             //if (RLibPath == null) {
-            String RLibPath = "file.path('"+Constants.APP_USER_DIR.getAbsolutePath().replace('\\', '/')+"','R')";
+            String RLibPath = "file.path(Sys.getenv('HOME'),'R')"; // use getenv(HOME) which is also consistent remotely
             //}
             //if (RLibPath != null) {
             R.voidEval("if (!file.exists(" + RLibPath + ")) dir.create(" + RLibPath + ",recursive=TRUE)");
