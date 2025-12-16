@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.funz.*;
+import org.funz.log.Log;
+
 import static org.funz.Protocol.END_OF_REQ;
 import static org.funz.Protocol.RET_HEARTBEAT;
 import static org.funz.Protocol.RET_INFO;
@@ -75,7 +77,7 @@ public class Client implements Protocol {
     boolean log = false;
 
     public void log(String s) {
-        //System.err.println("<<<<<<<<<<<<<<<<<<<<<<<<< " + s);
+        //Log.out("[Client] "+ s, 10);
     }
 
     public static String getProtocol() {
@@ -240,6 +242,8 @@ public class Client implements Protocol {
                 _dis = new DataInputStream(_socket.getInputStream());
 
             } catch (Exception e) {
+                log("Exception on Socket instanciation on "+_host+":"+_port+"\n  "+e);
+                e.printStackTrace();
                 disconnect();
             }
         }
